@@ -1,0 +1,333 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ── NIGHT MODE (default) ── */
+:root {
+  --bg-primary:   #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-card:      #1a1410;
+  --card-border:  rgba(232, 220, 200, 0.08);
+  --rust:         #c0392b;
+  --amber-gold:   #f5a623;
+  --cream:        #e8dcc8;          /* always cream — don't override */
+  --brain-grey:   #8b8680;
+  --text-primary: #e8dcc8;
+  --text-muted:   #8b8680;
+  --text-on-dark: #e8dcc8;         /* readable on dark bg */
+  --text-on-light: #1a1410;        /* readable on light bg */
+  --danger:       #ef4444;
+  --safe:         #2d5a27;
+  --font-display: var(--font-bebas);
+  --font-ui:      var(--font-space);
+  --font-body:    var(--font-inter);
+  --font-mono:    var(--font-jetbrains);
+  color-scheme: dark;
+}
+
+/* ── DAY MODE ── */
+body[data-theme="day"] {
+  --bg-primary:   #f6efe5;
+  --bg-secondary: #efe4d2;
+  --bg-card:      #f9f2e6;
+  --card-border:  rgba(26, 20, 16, 0.12);
+  --text-primary: #1a1410;
+  --text-muted:   #6a6158;
+  /* cream stays cream — it's a brand color, not a text color */
+  color-scheme: light;
+}
+
+/* Smooth CSS var transitions on theme switch */
+body {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Film grain overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+}
+
+body[data-grain="off"]::before {
+  opacity: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-ui), system-ui, sans-serif;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ── Utility classes ── */
+.font-display { font-family: var(--font-display), system-ui, sans-serif; }
+.font-ui      { font-family: var(--font-ui), system-ui, sans-serif; }
+.font-body    { font-family: var(--font-body), system-ui, sans-serif; }
+.font-mono    { font-family: var(--font-mono), ui-monospace, Menlo, monospace; }
+
+.card-shell {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+/* Brand cream — never changes with theme */
+.text-brand    { color: #E8DCC8 !important; }
+.text-rust     { color: #C0392B !important; }
+.text-amber    { color: #F5A623 !important; }
+
+/* Adaptive text — follows theme */
+.text-adaptive       { color: var(--text-primary); }
+.text-adaptive-muted { color: var(--text-muted); }
+
+.button-outline {
+  border: 1px solid #E8DCC8;
+  color: #E8DCC8;
+  padding: 0.85rem 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  transition: background 0.2s, color 0.2s;
+}
+.button-outline:hover {
+  background: #C0392B;
+  border-color: #C0392B;
+  color: #E8DCC8;
+}
+
+.button-solid {
+  background: #C0392B;
+  color: #E8DCC8;
+  padding: 1rem 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(232, 220, 200, 0.02),
+    rgba(232, 220, 200, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.barcode {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 2px;
+}
+.barcode span {
+  width: 3px;
+  height: 38px;
+  background: rgba(232, 220, 200, 0.45);
+}
+
+/* ── Animations ── */
+.saturn-ring { animation: spin-slow 20s linear infinite; }
+.ring-pulse  { animation: pulse-ring 2s ease-in-out infinite; }
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(0.96); opacity: 0.6; }
+  50%       { transform: scale(1.04); opacity: 1; }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-8px); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(8px); opacity: 0; }
+}
+.animate-scan-line { animation: scan-line 2s ease-in-out infinite; }
+
+/* ── View Transition (theme toggle) ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html[data-magicui-theme-vt="active"]::view-transition-group(root) {
+  animation-duration: var(--magicui-theme-toggle-vt-duration, 500ms);
+}
+
+/* ── RETRO CRT / 2000s VIBE ── */
+.crt-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-effect::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 204, 255, 0.03),
+    rgba(0, 204, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  mix-blend-mode: overlay;
+}
+
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 136, 0.02) 50%,
+    transparent 100%
+  );
+  animation: scan-beam 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan-beam {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Retro Button Styles */
+.retro-btn {
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 10px 16px;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.3s ease;
+}
+
+.retro-btn:hover::before {
+  left: 100%;
+}
+
+.retro-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.retro-btn-primary {
+  background: rgba(0, 204, 255, 0.1);
+  border-color: #00ccff;
+  color: #00ccff;
+}
+.retro-btn-primary:hover:not(:disabled) {
+  background: rgba(0, 204, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.2);
+}
+
+.retro-btn-secondary {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: #00ff88;
+  color: #00ff88;
+}
+.retro-btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.2);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+
+.retro-btn-accent {
+  background: rgba(255, 51, 255, 0.1);
+  border-color: #ff33ff;
+  color: #ff33ff;
+}
+.retro-btn-accent:hover:not(:disabled) {
+  background: rgba(255, 51, 255, 0.2);
+  box-shadow: 0 0 15px rgba(255, 51, 255, 0.2);
+}
+
+.retro-btn-danger {
+  background: rgba(255, 51, 51, 0.15);
+  border-color: #ff3333;
+  color: #ff3333;
+  animation: pulse-rec 1s ease-in-out infinite;
+}
+.retro-btn-danger:hover:not(:disabled) {
+  background: rgba(255, 51, 51, 0.25);
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.3);
+}
+
+@keyframes pulse-rec {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Retro Glitch Text */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+}
+
+.retro-glitch {
+  animation: glitch 0.3s ease-in-out infinite;
+}
